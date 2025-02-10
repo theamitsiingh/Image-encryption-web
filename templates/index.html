@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Encryption</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        .container { max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; }
+        input, button { margin: 10px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Image Encryption</h2>
+        <form id="encryptForm" enctype="multipart/form-data">
+            <input type="file" name="image" id="image" required>
+            <button type="submit">Encrypt</button>
+        </form>
+        <a id="downloadEncrypted" style="display:none;">Download Encrypted Image</a>
+        
+        <h2>Image Decryption</h2>
+        <form id="decryptForm" enctype="multipart/form-data">
+            <input type="file" name="encrypted_image" id="encrypted_image" required>
+            <button type="submit">Decrypt</button>
+        </form>
+        <a id="downloadDecrypted" style="display:none;">Download Decrypted Image</a>
+    </div>
+
+    <script>
+        document.getElementById('encryptForm').onsubmit = async function(event) {
+            event.preventDefault();
+            let formData = new FormData(this);
+            let response = await fetch('/encrypt', { method: 'POST', body: formData });
+            let blob = await response.blob();
+            let link = document.getElementById('downloadEncrypted');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'encrypted_image.enc';
+            link.style.display = 'block';
+            link.textContent = 'Download Encrypted Image';
+        };
+
+        document.getElementById('decryptForm').onsubmit = async function(event) {
+            event.preventDefault();
+            let formData = new FormData(this);
+            let response = await fetch('/decrypt', { method: 'POST', body: formData });
+            let blob = await response.blob();
+            let link = document.getElementById('downloadDecrypted');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'decrypted_image.png';
+            link.style.display = 'block';
+            link.textContent = 'Download Decrypted Image';
+        };
+    </script>
+</body>
+</html>
